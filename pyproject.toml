@@ -1,0 +1,17 @@
+[project]
+name = "personalfinancemanagement"
+version = "0.1.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "sqlalchemy (>=2.0.38,<3.0.0)",
+    "pyqt6 (>=6.8.1,<7.0.0)",
+    "matplotlib (>=3.10.1,<4.0.0)",
+    "xlsxwriter (>=3.2.2,<4.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
