@@ -11,6 +11,8 @@ dependencies = [
     "xlsxwriter (>=3.2.2,<4.0.0)"
 ]
 
+[tool.poetry]
+package-mode = false
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
