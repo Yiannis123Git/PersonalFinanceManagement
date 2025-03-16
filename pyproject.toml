@@ -3,12 +3,12 @@ name = "personalfinancemanagement"
 version = "0.1.0"
 description = ""
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.13,<3.14"
 dependencies = [
     "sqlalchemy (>=2.0.38,<3.0.0)",
-    "pyqt6 (>=6.8.1,<7.0.0)",
     "matplotlib (>=3.10.1,<4.0.0)",
-    "xlsxwriter (>=3.2.2,<4.0.0)"
+    "xlsxwriter (>=3.2.2,<4.0.0)",
+    "pyside6 (>=6.8.2.1,<7.0.0.0)",
 ]
 
 [tool.poetry]
