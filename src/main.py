@@ -1,6 +1,6 @@
 import sys
 
-from PyQt6.QtWidgets import (
+from PySide6.QtWidgets import (
     QApplication,
     QHBoxLayout,
     QLabel,
