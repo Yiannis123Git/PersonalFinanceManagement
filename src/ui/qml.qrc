@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/ui">
+        <file>assets/images/app-icon.png</file>
+        <file>assets/images/light-theme-icon.png</file>
+        <file>assets/images/dark-theme-icon.png</file>
+    </qresource>
+</RCC>
