@@ -49,7 +49,7 @@ ApplicationWindow {
             showCloseButton: true
 
             // Theme toggle
-            customWindowControls: Button {
+            Button {
                 id: appThemeToggle
                 width: 20
                 height: 20
