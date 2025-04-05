@@ -9,5 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/ruff-action@v3
+        with:
+          version-file: "pyproject.toml"
       - run: ruff check --fix
       - run: ruff format
