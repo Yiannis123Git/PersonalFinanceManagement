@@ -99,8 +99,8 @@ ToolBar {
         // App Logo/Icon
         Rectangle {
             id: appIcon
-            width: 30
-            height: 30
+            Layout.preferredWidth: 30
+            Layout.preferredHeight: 30
             radius: 5
             color: titleBar.iconSource == "" ? Material.accentColor : "transparent"
             visible: titleBar.iconSource != ""

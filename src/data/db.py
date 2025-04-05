@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
 from sqlalchemy import create_engine
-from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from utility import save
 
 from .models import Base
+
+if TYPE_CHECKING:
+    from sqlalchemy.engine import Engine
 
 
 class State:
@@ -48,14 +50,14 @@ class State:
         if not self._initialized:
             raise RuntimeError(self._UNINITIALIZED_MSG)
 
-        cast(Engine, self._engine).dispose()
+        cast("Engine", self._engine).dispose()
 
     def create_session(self) -> Session:
         """Create a new database session."""
         if not self._initialized:
             raise RuntimeError(self._UNINITIALIZED_MSG)
 
-        return cast(sessionmaker, self._session_factory)()
+        return cast("sessionmaker", self._session_factory)()
 
 
 _state = State()
