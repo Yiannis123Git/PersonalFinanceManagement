@@ -1,15 +1,16 @@
 import argparse
 import sys
 
+from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication
 
+# Import app modules
+from app_controller import AppController
+
 # Import qrc resources
 from ui import qml_rc  # noqa: F401
-
-# Import utility functions
-from utility import save
 
 
 def parse_args() -> argparse.Namespace:
@@ -36,23 +37,30 @@ if __name__ == "__main__":
     # set application icon
     app.setWindowIcon(QIcon(":/ui/assets/images/app-icon.png"))
 
-    # Establish saved data location
-    save.instantiate(cl_args.temp_instance)
+    # Create the application controller
+    app_controller = AppController()
 
+    # Create qml engine
     engine = QQmlApplicationEngine()
+
+    # Expose the controller to QML
+    engine.rootContext().setContextProperty("appController", app_controller)
 
     # Add the current directory to the import paths and load the main module.
     engine.addImportPath(sys.path[0])
-
     engine.loadFromModule("ui", "Main")
 
     # Check if the QML file was loaded successfully
     if not engine.rootObjects():
         sys.exit(-1)
 
+    # Start initialization process
+    QTimer.singleShot(0, lambda: app_controller.start_initialization(cl_args))
+
     # Start event loop (yields)
     exit_code = app.exec()
 
     # Cleanup and exit
     del engine
+    app_controller.cleanup()
     sys.exit(exit_code)
