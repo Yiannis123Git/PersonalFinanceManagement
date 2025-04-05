@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Callable
+from typing import TYPE_CHECKING
 
 from PySide6.QtCore import Property, QObject, QThread, Signal
 
@@ -10,6 +10,7 @@ from utility import save
 
 if TYPE_CHECKING:
     import argparse
+    from collections.abc import Callable
 
 
 class Worker(QObject):
