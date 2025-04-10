@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import Property, QObject, QThread, Signal
+from PySide6.QtCore import QObject, QThread, Signal
 
 # import app modules
 from data import db
-from utility import save
+from utility import qt_util, save
 
 if TYPE_CHECKING:
     import argparse
@@ -46,8 +46,6 @@ class InitializationWorker(Worker):
 
 
 class AppController(QObject):
-    init_step_changed = Signal(str)
-
     def __init__(self) -> None:
         super().__init__()
         self._current_init_step = ""
@@ -55,20 +53,13 @@ class AppController(QObject):
         self._threads: dict[str, QThread] = {}
         self._workers: dict[str, Worker] = {}
 
-    def _get_current_init_step(self) -> str:
-        """Get the current initialization step."""
-        return self._current_init_step
-
-    def _set_current_init_step(self, step: str) -> None:
-        """Set the current initialization step."""
-        self._current_init_step = step
-        self.init_step_changed.emit(step)
-
-    current_init_step = Property(
-        str,
-        _get_current_init_step,
-        _set_current_init_step,
-        notify=init_step_changed,  # type: ignore  # noqa: PGH003
+    # current initialization step property
+    current_init_step, _get_current_init_step, _set_current_init_step, init_step_changed = (
+        qt_util.qt_property(
+            str,
+            "current_init_step",
+            "init_step_changed",
+        )
     )
 
     def _start_task(
