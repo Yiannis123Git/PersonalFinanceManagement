@@ -34,7 +34,7 @@ ApplicationWindow {
         borderWidth: 5
     }
 
-    // App window navigation
+    // App window controls
     menuBar: Column {
         width: parent.width
 
@@ -92,6 +92,17 @@ ApplicationWindow {
                     }
                 }
             }
+        }
+    }
+
+    // Loading screen
+    Loader {
+        active: !appController.init_status // qmllint disable unqualified
+        anchors.centerIn: parent
+        width: parent.width * 0.3
+        height: parent.height * 0.3
+        sourceComponent: LoadingCircle {
+            statusText: qsTr(appController.current_init_step) // qmllint disable unqualified
         }
     }
 }

@@ -3,5 +3,6 @@
         <file>assets/images/app-icon.png</file>
         <file>assets/images/light-theme-icon.png</file>
         <file>assets/images/dark-theme-icon.png</file>
+        <file>assets/images/loading-circle.png</file>
     </qresource>
 </RCC>
