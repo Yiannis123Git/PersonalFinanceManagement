@@ -29,6 +29,7 @@ class Worker(QObject):
 
 class InitializationWorker(Worker):
     step_changed = Signal(str)
+    init_finished = Signal(bool)
 
     def __init__(self, *, temp_instance: bool) -> None:
         super().__init__("Initialization")
@@ -42,6 +43,8 @@ class InitializationWorker(Worker):
         self.step_changed.emit("Initializing database")
         db.initialize()
 
+        self.init_finished.emit(True)  # noqa: FBT003
+
         self.finished.emit()
 
 
@@ -49,6 +52,7 @@ class AppController(QObject):
     def __init__(self) -> None:
         super().__init__()
         self._current_init_step = ""
+        self._init_status = False
 
         self._threads: dict[str, QThread] = {}
         self._workers: dict[str, Worker] = {}
@@ -60,6 +64,13 @@ class AppController(QObject):
             "current_init_step",
             "init_step_changed",
         )
+    )
+
+    # initialization status property
+    init_status, _get_init_status, _set_init_status, init_status_changed = qt_util.qt_property(
+        bool,
+        "init_status",
+        "init_status_changed",
     )
 
     def _start_task(
@@ -109,7 +120,7 @@ class AppController(QObject):
         # Start the task
         self._start_task(
             init_worker,
-            {"step_changed": self._set_current_init_step},
+            {"step_changed": self._set_current_init_step, "init_finished": self._set_init_status},
         )
 
     def cleanup(self) -> None:
