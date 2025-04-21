@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from typing import TYPE_CHECKING, cast
 
 from sqlalchemy import create_engine
@@ -12,13 +13,14 @@ from .models import Base
 if TYPE_CHECKING:
     from sqlalchemy.engine import Engine
 
+# create logger for module
+logger = logging.getLogger(__name__)
+
 
 class State:
     def __init__(self) -> None:
         self._DB_NAME = "pfm"
-        self._UNINITIALIZED_MSG = (
-            "Database not initialized. Call initialize_db() first."
-        )
+        self._UNINITIALIZED_MSG = "Database not initialized. Call initialize_db() first."
         self._engine: Engine | None = None
         self._session_factory: sessionmaker | None = None
         self._initialized = False
@@ -48,7 +50,8 @@ class State:
     def close_db(self) -> None:
         """Close the database connection."""
         if not self._initialized:
-            raise RuntimeError(self._UNINITIALIZED_MSG)
+            logger.warning("Tried to close database before it was initialized.")
+            return
 
         cast("Engine", self._engine).dispose()
 
