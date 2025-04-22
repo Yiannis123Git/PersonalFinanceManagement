@@ -48,15 +48,14 @@ Item {
             let e = 0;
             if (mousePos.x < border) {
                 e |= Qt.LeftEdge;
-            }
-            if (mousePos.x >= windowResizer.width - border) {
+            } else if (mousePos.x >= windowResizer.width - border) {
                 e |= Qt.RightEdge;
-            }
-            if (mousePos.y < border) {
+            } else if (mousePos.y < border) {
                 e |= Qt.TopEdge;
-            }
-            if (mousePos.y >= windowResizer.height - border) {
+            } else if (mousePos.y >= windowResizer.height - border) {
                 e |= Qt.BottomEdge;
+            } else {
+                return;
             }
 
             windowResizer.targetWindow.startSystemResize(e);
