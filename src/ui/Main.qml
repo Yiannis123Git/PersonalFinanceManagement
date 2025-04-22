@@ -1,8 +1,14 @@
+// Disable certain linting rules for this file due to AppController usage
+// qmllint disable unqualified
+// qmllint disable import
+
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
 import Qt5Compat.GraphicalEffects
+import QtQuick.Layouts
 import "./components"
+import AppController 1.0
 
 ApplicationWindow {
     id: appWindow
@@ -38,7 +44,7 @@ ApplicationWindow {
     menuBar: Column {
         width: parent.width
 
-        // window app custom title bar
+        // Window app custom title bar
         TitleBar {
             id: appWindowTitleBar
             parentWindow: appWindow
@@ -97,12 +103,71 @@ ApplicationWindow {
 
     // Loading screen
     Loader {
-        active: !appController.init_status // qmllint disable unqualified
+        active: !AppController.init_status
         anchors.centerIn: parent
         width: parent.width * 0.3
         height: parent.height * 0.3
         sourceComponent: LoadingCircle {
-            statusText: qsTr(appController.current_init_step) // qmllint disable unqualified
+            statusText: qsTr(AppController.current_init_step)
+        }
+    }
+
+    // App window content
+    ColumnLayout {
+        anchors.fill: parent
+        spacing: 0
+
+        // Tab bar
+        TabBar {
+            id: tabBar
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignTop
+            contentHeight: parent.height * 0.08
+
+            TabButton {
+                text: qsTr("Overview")
+                font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.15)
+                onClicked: stackView.currentIndex = 0
+            }
+
+            TabButton {
+                text: qsTr("Data Analysis")
+                font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.15)
+                onClicked: stackView.currentIndex = 1
+            }
+        }
+
+        // Tab content
+        StackLayout {
+            id: stackView
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            Item {
+                id: overviewTab
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Text {
+                    anchors.centerIn: parent
+                    text: qsTr("Overview tab content")
+                    font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.05)
+                    color: Material.foreground
+                }
+            }
+
+            Item {
+                id: dataAnalysisTab
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+
+                Text {
+                    anchors.centerIn: parent
+                    text: qsTr("Data Analysis tab content")
+                    font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.05)
+                    color: Material.foreground
+                }
+            }
         }
     }
 }
