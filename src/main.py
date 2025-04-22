@@ -3,7 +3,7 @@ import sys
 
 from PySide6.QtCore import QTimer
 from PySide6.QtGui import QIcon
-from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtQml import QQmlApplicationEngine, qmlRegisterSingletonInstance
 from PySide6.QtWidgets import QApplication
 
 # Import app modules
@@ -30,6 +30,19 @@ if __name__ == "__main__":
     # Get command line arguments
     cl_args = parse_args()
 
+    # Create the application controller
+    app_controller = AppController()
+
+    # Register the application controller on the qml side
+    qmlRegisterSingletonInstance(
+        AppController,
+        "AppController",
+        1,
+        0,
+        "AppController",  # type: ignore  # noqa: PGH003
+        app_controller,
+    )
+
     app = QApplication(sys.argv)
     QApplication.setOrganizationName("HLE43-3")
     QApplication.setApplicationName("Personal Finance Management")
@@ -37,14 +50,8 @@ if __name__ == "__main__":
     # set application icon
     app.setWindowIcon(QIcon(":/ui/assets/images/app-icon.png"))
 
-    # Create the application controller
-    app_controller = AppController()
-
     # Create qml engine
     engine = QQmlApplicationEngine()
-
-    # Expose the controller to QML
-    engine.rootContext().setContextProperty("appController", app_controller)
 
     # Add the current directory to the import paths and load the main module.
     engine.addImportPath(sys.path[0])
