@@ -179,5 +179,6 @@ cython_debug/
 #pyqt
 *_rc.py
 
-# app data saved during development
+# app data saved during development (incld .dev-data for backwards compatibility)
+.dev_data
 .dev-data
