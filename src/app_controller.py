@@ -2,10 +2,16 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QObject, QThread, Signal
+from PySide6.QtCore import QObject, QThread, Signal, Slot
 
 # import app modules
 from data import db
+from graph_gen import (
+    plot_daily_transactions,
+    plot_expense_distribution,
+    plot_income_vs_expense,
+    plot_monthly_trend,
+)
 from utility import qt_util, save
 
 if TYPE_CHECKING:
@@ -72,6 +78,26 @@ class AppController(QObject):
         "init_status",
         "init_status_changed",
     )
+
+    @Slot(str, str)
+    def plot_daily_transactions(self, year: str, month: str) -> None:
+        """Generate daily transaction graph."""
+        plot_daily_transactions(int(year), int(month))
+
+    @Slot(str)
+    def plot_monthly_trend(self, year: str) -> None:
+        """Generate monthly trend graph."""
+        plot_monthly_trend(int(year))
+
+    @Slot(str)
+    def plot_income_vs_expense(self, year: str) -> None:
+        """Generate income vs expense graph."""
+        plot_income_vs_expense(int(year))
+
+    @Slot(str)
+    def plot_expense_distribution(self, year: str) -> None:
+        """Generate expense distribution graph."""
+        plot_expense_distribution(int(year))
 
     def _start_task(
         self,
