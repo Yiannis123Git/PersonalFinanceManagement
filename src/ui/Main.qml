@@ -126,11 +126,273 @@ ApplicationWindow {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Text {
-                    anchors.centerIn: parent
-                    text: qsTr("Data Analysis tab content")
-                    font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.05)
-                    color: Material.foreground
+                Flickable {
+                    id: scrollArea
+                    anchors.fill: parent
+                    contentWidth: chartsGrid.implicitWidth
+                    contentHeight: chartsGrid.implicitHeight
+                    clip: true
+
+                    ColumnLayout {
+                        id: layoutColumn
+                        width: parent.width
+                        spacing: 20
+
+                        GridLayout {
+                            id: chartsGrid
+                            width: scrollArea.width
+                            columns: appWindow.width > 1300 ? 2 : 1  // use appWindow directly
+                            rowSpacing: 20
+                            columnSpacing: 20
+
+                            // Chart 1
+                            ColumnLayout {
+                                spacing: 10
+                                Layout.alignment: Qt.AlignHCenter
+                                Text {
+                                    text: "Income&Expenses for Year in Months"
+                                    font.bold: true
+                                    font.pointSize: 14
+                                    color: Material.foreground
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                                Rectangle {
+                                    width: 600
+                                    height: 40
+                                    color: "transparent"
+                                    RowLayout {
+                                        spacing: 10
+                                        anchors.fill: parent
+                                        ComboBox {
+                                            id: chart1Year
+                                            Layout.fillWidth: true
+                                            model: ["2023", "2024", "2025"]
+                                            currentIndex: 2
+                                            Layout.preferredHeight: 40
+                                        }
+                                        Button {
+                                            text: "Generate Graph"
+                                            onClicked: {
+                                                var selectedYear = chart1Year.currentText;
+                                                AppController.plot_monthly_trend(selectedYear);
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.preferredWidth: 600
+                                    Layout.preferredHeight: 400
+                                    color: "#eeeeee"
+                                    border.color: "#cccccc"
+                                    border.width: 1
+                                    radius: 8
+
+                                    Image {
+                                        id: chartImage1
+                                        anchors.centerIn: parent
+                                        width: parent.width
+                                        height: parent.height
+                                        source: "../graphs/monthlychart.png"
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Chart Placeholder"
+                                        color: "#888"
+                                        visible: chartImage1.source === "graphs/monthlychart.png" && !chartImage1.visible
+                                    }
+                                }
+                            }
+
+                            // Chart 2
+                            ColumnLayout {
+                                spacing: 10
+                                Layout.alignment: Qt.AlignHCenter
+                                Text {
+                                    text: "Income&Expenses for Month in Days"
+                                    font.bold: true
+                                    font.pointSize: 14
+                                    color: Material.foreground
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                                Rectangle {
+                                    width: 600
+                                    height: 40
+                                    color: "transparent"
+                                    RowLayout {
+                                        spacing: 10
+                                        anchors.fill: parent
+                                        ComboBox {
+                                            id: chart2Year
+                                            Layout.fillWidth: true
+                                            model: ["2023", "2024", "2025"]
+                                            currentIndex: 2
+                                            Layout.preferredHeight: 40
+                                        }
+                                        ComboBox {
+                                            id: chart2Month
+                                            Layout.fillWidth: true
+                                            model: ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"]
+                                            currentIndex: 0
+                                            Layout.preferredHeight: 40
+                                        }
+                                        Button {
+                                            text: "Generate Graph"
+                                            onClicked: {
+                                                // Get the selected year and month
+                                                var selectedYear = chart2Year.currentText;
+                                                var selectedMonth = chart2Month.currentText;
+                                                // Call the plot function in AppController
+                                                AppController.plot_daily_transactions(selectedYear, selectedMonth);
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.preferredWidth: 600
+                                    Layout.preferredHeight: 400
+                                    color: "#eeeeee"
+                                    border.color: "#cccccc"
+                                    border.width: 1
+                                    radius: 8
+
+                                    Image {
+                                        id: chartImage2
+                                        anchors.centerIn: parent
+                                        width: parent.width
+                                        height: parent.height
+                                        source: "../graphs/dailychart.png"
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Chart Placeholder"
+                                        color: "#888"
+                                        visible: chartImage2.source === "graphs/dailychart.png" && !chartImage2.visible
+                                    }
+                                }
+                            }
+
+                            // Chart 3
+                            ColumnLayout {
+                                spacing: 10
+                                Layout.alignment: Qt.AlignHCenter
+                                Text {
+                                    text: "Total Income&Expenses for Year"
+                                    font.bold: true
+                                    font.pointSize: 14
+                                    color: Material.foreground
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                                Rectangle {
+                                    width: 600
+                                    height: 40
+                                    color: "transparent"
+                                    RowLayout {
+                                        spacing: 10
+                                        anchors.fill: parent
+                                        ComboBox {
+                                            id: chart3Year
+                                            Layout.fillWidth: true
+                                            model: ["2023", "2024", "2025"]
+                                            currentIndex: 2
+                                            Layout.preferredHeight: 40
+                                        }
+                                        Button {
+                                            text: "Generate Graph"
+                                            onClicked: {
+                                                // Get the selected year and month
+                                                var selectedYear = chart3Year.currentText;
+                                                // Call the plot function in AppController
+                                                AppController.plot_income_vs_expense(selectedYear);
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.preferredWidth: 600
+                                    Layout.preferredHeight: 400
+                                    color: "#eeeeee"
+                                    border.color: "#cccccc"
+                                    border.width: 1
+                                    radius: 8
+
+                                    Image {
+                                        id: chartImage3
+                                        anchors.centerIn: parent
+                                        width: parent.width
+                                        height: parent.height
+                                        source: "../graphs/income_vs_expense.png"
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Chart Placeholder"
+                                        color: "#888"
+                                        visible: chartImage3.source === "graphs/income_vs_expense.png" && !chartImage3.visible
+                                    }
+                                }
+                            }
+
+                            // Chart 4
+                            ColumnLayout {
+                                spacing: 10
+                                Layout.alignment: Qt.AlignHCenter
+                                Text {
+                                    text: "Expense Distribution by Category"
+                                    font.bold: true
+                                    font.pointSize: 14
+                                    color: Material.foreground
+                                    Layout.alignment: Qt.AlignHCenter
+                                }
+                                Rectangle {
+                                    width: 600
+                                    height: 40
+                                    color: "transparent"
+                                    RowLayout {
+                                        spacing: 10
+                                        anchors.fill: parent
+                                        ComboBox {
+                                            id: chart4Year
+                                            Layout.fillWidth: true
+                                            model: ["2023", "2024", "2025"]
+                                            currentIndex: 2
+                                            Layout.preferredHeight: 40
+                                        }
+                                        Button {
+                                            text: "Generate Graph"
+                                            onClicked: {
+                                                // Get the selected year
+                                                var selectedYear = chart4Year.currentText;
+                                                // Call the plot function in AppController
+                                                AppController.plot_expense_distribution(selectedYear);
+                                            }
+                                        }
+                                    }
+                                }
+                                Rectangle {
+                                    Layout.preferredWidth: 600
+                                    Layout.preferredHeight: 400
+                                    color: "#eeeeee"
+                                    border.color: "#cccccc"
+                                    border.width: 1
+                                    radius: 8
+
+                                    Image {
+                                        id: chartImage4
+                                        anchors.centerIn: parent
+                                        width: parent.width
+                                        height: parent.height
+                                        source: "../graphs/expense_distribution.png"  // Fixed path to the generated graph
+
+                                    }
+                                    Text {
+                                        anchors.centerIn: parent
+                                        text: "Chart Placeholder"
+                                        color: "#888"
+                                        visible: chartImage4.source === "graphs/expense_distribution.png" && !chartImage4.visible
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
