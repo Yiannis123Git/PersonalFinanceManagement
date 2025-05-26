@@ -13,14 +13,14 @@ QtObject {
         "Light": {
             name: "Light theme",
             theme: Material.Light,
-            accent: Material.Pink,
-            primary: Material.Purple,
+            accent: Material.Cyan,
+            primary: Material.LightBlue,
             elevation: 6
         },
         "Dark": {
             name: "Dark theme",
             theme: Material.Dark,
-            accent: Material.Blue,
+            accent: Material.Indigo,
             primary: Material.DeepPurple,
             elevation: 6
         }
