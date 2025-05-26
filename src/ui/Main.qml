@@ -80,6 +80,7 @@ ApplicationWindow {
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
+        visible: AppController.init_status
 
         // Tab bar
         TabBar {
