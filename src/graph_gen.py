@@ -47,6 +47,15 @@ def plot_daily_transactions(year: int, month: int) -> None:
     ].copy()
 
     if filtered_df.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}-{month:02d}", fontsize=12)
+        plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "dailychart.png"
+        plt.savefig(output_path)
+        plt.close()
         return
 
     # Group by day and calculate income and expense
@@ -65,8 +74,7 @@ def plot_daily_transactions(year: int, month: int) -> None:
     income_df = income_df.reindex(valid_days, fill_value=0)
     expense_df = expense_df.reindex(valid_days, fill_value=0)
 
-    # Plot with optimized layout for 600x400 size
-    plt.figure(figsize=(6, 4))  # 600x400 pixels
+    plt.figure(figsize=(6, 4))
 
     bar_width = 0.35  # Narrower bars to reduce clutter
     index = valid_days
@@ -75,26 +83,25 @@ def plot_daily_transactions(year: int, month: int) -> None:
     plt.bar(index, income_df, bar_width, label="Income", color="green")
     plt.bar([i + bar_width for i in index], expense_df, bar_width, label="Expense", color="red")
 
-    # Adjust font sizes and rotate x-ticks to avoid cluttering
+    # Plot settings
     plt.xlabel("Day", fontsize=10)
     plt.ylabel("Amount (€)", fontsize=10)
     plt.title(f"Daily Income & Expenses for {year}-{month:02d}", fontsize=12)
-    plt.xticks(fontsize=8, rotation=45)  # Rotate x-axis labels to fit them better
+    plt.xticks(fontsize=8, rotation=45)
     plt.yticks(fontsize=8)
 
     plt.grid(visible=True, axis="y", linestyle="--", alpha=0.7)
 
-    # Make sure all legend items are visible and positioned well
     plt.legend(
         fontsize=8,
         loc="upper left",
         bbox_to_anchor=(1, 1),
-    )  # Place legend outside to avoid overlap
+    )
 
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "graphs"
+    output_dir = Path(__file__).parent / "data/graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "dailychart.png"
     plt.savefig(output_path)
@@ -102,11 +109,22 @@ def plot_daily_transactions(year: int, month: int) -> None:
 
 
 def plot_monthly_trend(year: int) -> None:
-    """Use load_transactions_as_dataframe generate a daily transaction graph and save it."""
+    """Use load_transactions_as_dataframe generate a monthly trend graph and save it."""
     dataframe = load_transactions_as_dataframe()
 
     # Filter for the given year
     filtered_df = dataframe[dataframe["DateOf"].dt.year == year].copy()
+    if filtered_df.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}", fontsize=12)
+        plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "monthlychart.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
 
     # Group by month and calculate income and expense
     income_df = (
@@ -126,18 +144,14 @@ def plot_monthly_trend(year: int) -> None:
     income_df = income_df.set_index("DateOf").reindex(range(1, 13), fill_value=0).reset_index()
     expense_df = expense_df.set_index("DateOf").reindex(range(1, 13), fill_value=0).reset_index()
 
-    # Rename the columns for convenience
     income_df.columns = ["Month", "Income"]
     expense_df.columns = ["Month", "Expense"]
 
-    # Prepare bar chart
     plt.figure(figsize=(6, 4))
     bar_width = 0.35
     index = range(1, 13)
 
-    # Plot Income bars (green)
     plt.bar(index, income_df["Income"], bar_width, label="Income", color="green")
-    # Plot Expense bars (red)
     plt.bar(
         [i + bar_width for i in index],
         expense_df["Expense"],
@@ -156,7 +170,7 @@ def plot_monthly_trend(year: int) -> None:
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "graphs"
+    output_dir = Path(__file__).parent / "data/graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "monthlychart.png"
     plt.savefig(output_path)
@@ -170,14 +184,21 @@ def plot_income_vs_expense(year: int) -> None:
     # Filter data for the given year
     filtered_df = dataframe[dataframe["DateOf"].dt.year == year]
 
-    # Calculate income and expenses
+    if filtered_df.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Income or Expenses for {year}", fontsize=12)
+        plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "income_vs_expense.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
+
     total_income = filtered_df[filtered_df["OfType"] == "Income"]["Amount"].sum()
     total_expense = filtered_df[filtered_df["OfType"] == "Expense"]["Amount"].sum()
 
-    # Create output path
-    output_path = Path(__file__).resolve().parent / "graphs" / "income_vs_expense.png"
-
-    # Prepare bar chart with 6x4 size
     plt.figure(figsize=(6, 4))
     plt.bar(["Income", "Expenses"], [total_income, total_expense], color=["green", "red"])
 
@@ -188,7 +209,7 @@ def plot_income_vs_expense(year: int) -> None:
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "graphs"
+    output_dir = Path(__file__).parent / "data/graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "income_vs_expense.png"
     plt.savefig(output_path)
@@ -196,7 +217,7 @@ def plot_income_vs_expense(year: int) -> None:
 
 
 def plot_expense_distribution(year: int) -> None:
-    """Use load_transactions_as_dataframe generate a expense distribution graph and save it."""
+    """Use load_transactions_as_dataframe generate an expense distribution graph and save it."""
     dataframe = load_transactions_as_dataframe()
 
     # Filter for the given year and only include expenses
@@ -204,18 +225,29 @@ def plot_expense_distribution(year: int) -> None:
         (dataframe["DateOf"].dt.year == year) & (dataframe["OfType"] == "Expense")
     ]
 
+    if expense_df.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Expenses for {year}", fontsize=12)
+        plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "expense_distribution.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
+
     # Group expenses by category
     category_totals = expense_df.groupby("Category")["Amount"].sum()
 
-    # Ensure the index is a list or array of strings for the labels
     category_labels = category_totals.index.astype(str).tolist()
 
-    # Generate colors based on the number of categories
+    # Generate colors
     num_categories = len(category_totals)
     colormap = mpl.colormaps["Set3"]
     colors = [colormap(i / num_categories) for i in range(num_categories)]
 
-    # Pie chart settings
+    # Plot settings
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.pie(
         category_totals,
@@ -223,14 +255,14 @@ def plot_expense_distribution(year: int) -> None:
         autopct="%1.1f%%",
         colors=colors,
         startangle=140,
-        pctdistance=0.8,  # Bring percentages closer to the center
+        pctdistance=0.8,
         labeldistance=1.1,
     )
     ax.set_title(f"Expense Distribution by Category ({year})")
     ax.set_aspect("equal")  # Ensure pie is a circle
 
     # Save plot
-    output_dir = Path(__file__).parent / "graphs"
+    output_dir = Path(__file__).parent / "data/graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "expense_distribution.png"
     plt.savefig(output_path)
