@@ -1,11 +1,14 @@
 from __future__ import annotations
 
+import contextlib
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 
 # import app modules
 from data import db
+from excel_gen import export_database, export_transactions_by_month
 from graph_gen import (
     plot_daily_transactions,
     plot_expense_distribution,
@@ -99,6 +102,16 @@ class AppController(QObject):
         """Generate expense distribution graph."""
         plot_expense_distribution(int(year))
 
+    @Slot()
+    def export_database(self) -> None:
+        """Export database to excel."""
+        export_database()
+
+    @Slot(str, str)
+    def export_transactions_by_month(self, month: str, year: str) -> None:
+        """Export transaction to excel."""
+        export_transactions_by_month(int(month), int(year))
+
     def _start_task(
         self,
         task_worker: Worker,
@@ -151,4 +164,14 @@ class AppController(QObject):
 
     def cleanup(self) -> None:
         """Prepare application for exit."""
+        dry_run = False
+        folder = Path(__file__).resolve().parent / "data" / "graphs"  # delete pngs before quitting
+        if not folder.exists() or not folder.is_dir():
+            return
+        files = list(folder.glob("*.png"))  # list so glob runs once
+
+        for file_path in files:
+            if file_path.exists() and not dry_run:
+                with contextlib.suppress(FileNotFoundError, PermissionError):
+                    file_path.unlink()
         db.close_db()
