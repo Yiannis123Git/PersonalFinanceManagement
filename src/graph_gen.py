@@ -30,6 +30,9 @@ def load_transactions_as_dataframe() -> pd.DataFrame:
             for t in transactions
         ]
 
+        if not data:
+            return pd.DataFrame(columns=["Name", "Amount", "OfType", "DateOf", "Category"])
+
         dataframe = pd.DataFrame(data)
         dataframe["DateOf"] = pd.to_datetime(dataframe["DateOf"])  # Ensure datetime format
         return dataframe
@@ -41,6 +44,24 @@ def load_transactions_as_dataframe() -> pd.DataFrame:
 def plot_daily_transactions(year: int, month: int) -> None:
     """Use load_transactions_as_dataframe generate a daily transaction graph and save it."""
     dataframe = load_transactions_as_dataframe()
+    if dataframe.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}-{month:02d}", fontsize=12)
+        plt.text(
+            0.5,
+            0.5,
+            "Database empty. Please add data first.",
+            ha="center",
+            va="center",
+            fontsize=10,
+        )
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "dailychart.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
     # Filter data for the given year & month
     filtered_df = dataframe[
         (dataframe["DateOf"].dt.year == year) & (dataframe["DateOf"].dt.month == month)
@@ -112,6 +133,24 @@ def plot_monthly_trend(year: int) -> None:
     """Use load_transactions_as_dataframe generate a monthly trend graph and save it."""
     dataframe = load_transactions_as_dataframe()
 
+    if dataframe.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}", fontsize=12)
+        plt.text(
+            0.5,
+            0.5,
+            "Database empty. Please add data first.",
+            ha="center",
+            va="center",
+            fontsize=10,
+        )
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "monthlychart.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
     # Filter for the given year
     filtered_df = dataframe[dataframe["DateOf"].dt.year == year].copy()
     if filtered_df.empty:
@@ -181,6 +220,24 @@ def plot_income_vs_expense(year: int) -> None:
     """Use load_transactions_as_dataframe generate a income vs expenses graph and save it."""
     dataframe = load_transactions_as_dataframe()
 
+    if dataframe.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}", fontsize=12)
+        plt.text(
+            0.5,
+            0.5,
+            "Database empty. Please add data first.",
+            ha="center",
+            va="center",
+            fontsize=10,
+        )
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "income_vs_expense.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
     # Filter data for the given year
     filtered_df = dataframe[dataframe["DateOf"].dt.year == year]
 
@@ -220,6 +277,24 @@ def plot_expense_distribution(year: int) -> None:
     """Use load_transactions_as_dataframe generate an expense distribution graph and save it."""
     dataframe = load_transactions_as_dataframe()
 
+    if dataframe.empty:
+        plt.figure(figsize=(6, 4))
+        plt.title(f"No Transactions for {year}", fontsize=12)
+        plt.text(
+            0.5,
+            0.5,
+            "Database empty. Please add data first.",
+            ha="center",
+            va="center",
+            fontsize=10,
+        )
+        plt.axis("off")
+        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir.mkdir(exist_ok=True)
+        output_path = output_dir / "expense_distribution.png"
+        plt.savefig(output_path)
+        plt.close()
+        return
     # Filter for the given year and only include expenses
     expense_df = dataframe[
         (dataframe["DateOf"].dt.year == year) & (dataframe["OfType"] == "Expense")
