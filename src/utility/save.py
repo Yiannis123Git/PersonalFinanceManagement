@@ -16,7 +16,7 @@ class State:
     def __init__(self) -> None:
         self.production_mode = not sys.argv[0].endswith(".py")
         self._data_folder_path: Path | None = None
-        self._DEV_DATA_FOLDER = ".dev-data"
+        self._DEV_DATA_FOLDER = ".dev_data"
         self._PROD_DATA_FOLDER = "data"
         self._INVALID_PATH_ACCESS_MSG = "Tried to access data folder path before instantiation."
         self._TEMP_PREFIX = "pfm_temp_"

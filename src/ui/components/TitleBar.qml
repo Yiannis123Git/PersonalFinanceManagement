@@ -3,25 +3,22 @@ import QtQuick.Layouts
 import QtQuick.Controls.Material
 import QtQuick.Window
 
-// Adds a custom title bar with customizable window controls
-ToolBar {
+Rectangle {
     id: titleBar
 
-    // Customizable properties
     property Window parentWindow: null
     property string title: "Window Title"
-    property int borderSize: 1
-    property int heightValue: 40
+    property int borderSize: 0
     property bool showMinimizeButton: true
     property bool showMaximizeButton: true
     property bool showCloseButton: true
     property url iconSource: ""
     property int windowControlIconSize: 20
-    default property list<QtObject> customWindowControls
+    default property list<QtObject> extraWindowControls
 
-    // main component properties
+    // Main component properties
     width: parent.width
-    height: heightValue
+    height: 40
 
     function toggleMaximized() {
         if (titleBar.parentWindow.visibility === Window.FullScreen) {
@@ -34,15 +31,26 @@ ToolBar {
     // Title bar border
     Rectangle {
         id: titleBarBorder
-        color: Material.foreground
+        color: Material.secondaryTextColor
         visible: titleBar.borderSize > 0
         height: titleBar.borderSize
         width: parent.width
         anchors.bottom: parent.bottom
+        z: 10
+    }
+
+    // Gradient background
+    Rectangle {
+        anchors.fill: parent
+        color: "transparent"
+        GradientBackground {
+            gradientColor: Material.primary
+        }
     }
 
     Item {
         anchors.fill: parent
+
         // Handle bar double click to toggle maximize/minimize
         TapHandler {
             onTapped: if (tapCount === 2 && titleBar.showMaximizeButton) {
@@ -50,6 +58,7 @@ ToolBar {
             }
             gesturePolicy: TapHandler.DragThreshold
         }
+
         // Handle window dragging
         DragHandler {
             grabPermissions: TapHandler.CanTakeOverFromAnything
@@ -93,7 +102,7 @@ ToolBar {
     RowLayout {
         anchors.fill: parent
         anchors.leftMargin: 15
-        anchors.rightMargin: 15
+        anchors.rightMargin: 0
         spacing: 10
 
         // App Logo/Icon
@@ -101,10 +110,9 @@ ToolBar {
             id: appIcon
             Layout.preferredWidth: 30
             Layout.preferredHeight: 30
-            radius: 5
-            color: titleBar.iconSource == "" ? Material.accentColor : "transparent"
+            color: "transparent"
             visible: titleBar.iconSource != ""
-            Layout.alignment: Qt.AlignVCenter
+            Layout.alignment: Qt.AlignCenter
 
             Image {
                 anchors.fill: parent
@@ -119,22 +127,23 @@ ToolBar {
         // Title text
         Text {
             text: titleBar.title
-            color: Material.foreground
+            color: "white"
             font.pixelSize: 14
-            font.weight: Font.Medium
-            Layout.alignment: Qt.AlignVCenter
+            font.weight: Font.DemiBold
+            opacity: 0.9
+            Layout.alignment: Qt.AlignCenter
             Layout.leftMargin: 10
-            Layout.fillWidth: true
+            Layout.fillWidth: true // Creates a gap between the window controls
         }
 
         // Window controls
         Row {
-            spacing: 15
-            Layout.alignment: Qt.AlignVCenter
+            spacing: 0
+            Layout.alignment: Qt.AlignCenter
 
             // Custom window controls
             Repeater {
-                model: titleBar.customWindowControls
+                model: titleBar.extraWindowControls
                 delegate: Item {
                     required property var modelData
                     implicitWidth: modelData.width
@@ -146,63 +155,38 @@ ToolBar {
             }
 
             // Minimize button
-            Text {
-                id: minimizeButton
-                text: "−"
-                font.pixelSize: titleBar.windowControlIconSize
-                color: hovered ? Material.accentColor : Material.foreground
+            TBarTextIconButton {
+                height: 40
+                textIcon: "–"
+                toolTipText: qsTr("Minimize")
+                iconPixelSize: titleBar.windowControlIconSize
+                iconColor: "white"
                 visible: titleBar.showMinimizeButton
-                property bool hovered: false
-
-                MouseArea {
-                    id: minimizeButtonArea
-                    anchors.fill: parent
-                    anchors.margins: -5
-                    onClicked: titleBar.parentWindow.showMinimized()
-                    hoverEnabled: true
-                    onEntered: parent.hovered = true
-                    onExited: parent.hovered = false
-                }
+                onClicked: titleBar.parentWindow.showMinimized()
             }
 
             // Maximize button
-            Text {
-                id: maximizeButton
-                text: titleBar.parentWindow.visibility === Window.FullScreen ? "❐" : "□"
-                font.pixelSize: titleBar.windowControlIconSize - 2
-                color: hovered ? Material.accentColor : Material.foreground
+            TBarTextIconButton {
+                height: 40
+                textIcon: titleBar.parentWindow.visibility === Window.FullScreen ? "❐" : "□"
+                toolTipText: qsTr("Maximize")
+                iconPixelSize: titleBar.windowControlIconSize
+                iconColor: "white"
                 visible: titleBar.showMaximizeButton
-                property bool hovered: false
-
-                MouseArea {
-                    id: maximizeButtonArea
-                    anchors.fill: parent
-                    anchors.margins: -5
-                    onClicked: titleBar.toggleMaximized()
-                    hoverEnabled: true
-                    onEntered: parent.hovered = true
-                    onExited: parent.hovered = false
-                }
+                onClicked: titleBar.toggleMaximized()
             }
 
             // Close button
-            Text {
-                id: closeButton
-                text: "×"
-                font.pixelSize: titleBar.windowControlIconSize
-                color: hovered ? "#E81123" : Material.foreground
+            TBarTextIconButton {
+                height: 40
+                textIcon: "×"
+                toolTipText: qsTr("Close")
+                iconPixelSize: titleBar.windowControlIconSize
+                iconColor: "white"
+                hoverColor: "red"
+                hoverOpacity: 0.8
                 visible: titleBar.showCloseButton
-                property bool hovered: false
-
-                MouseArea {
-                    id: closeButtonArea
-                    anchors.fill: parent
-                    anchors.margins: -5
-                    onClicked: titleBar.parentWindow.close()
-                    hoverEnabled: true
-                    onEntered: parent.hovered = true
-                    onExited: parent.hovered = false
-                }
+                onClicked: titleBar.parentWindow.close()
             }
         }
     }

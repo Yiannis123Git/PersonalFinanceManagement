@@ -5,7 +5,6 @@
 import QtQuick
 import QtQuick.Controls
 import QtQuick.Controls.Material
-import Qt5Compat.GraphicalEffects
 import QtQuick.Layouts
 import "./components"
 import AppController 1.0
@@ -40,62 +39,27 @@ ApplicationWindow {
         borderWidth: 5
     }
 
-    // App window controls
-    menuBar: Column {
-        width: parent.width
+    // Window app custom title bar
+    menuBar: TitleBar {
+        id: appWindowTitleBar
+        parentWindow: appWindow
+        title: qsTr("Personal Finance Management")
+        iconSource: "qrc:/ui/assets/images/app-icon.png"
+        showMinimizeButton: true
+        showMaximizeButton: true
+        showCloseButton: true
+        borderSize: 1
 
-        // Window app custom title bar
-        TitleBar {
-            id: appWindowTitleBar
-            parentWindow: appWindow
-            title: qsTr("Personal Finance Management")
-            iconSource: "qrc:/ui/assets/images/app-icon.png"
-            showMinimizeButton: true
-            showMaximizeButton: true
-            showCloseButton: true
+        // Theme toggle
+        TBarImageButton {
+            toolTipText: Themes.currentTheme === "Dark" ? qsTr("Switch to Light Theme") : qsTr("Switch to Dark Theme")
+            imageSource: Themes.currentTheme === "Dark" ? "qrc:/ui/assets/images/light-theme-icon.png" : "qrc:/ui/assets/images/dark-theme-icon.png"
 
-            // Theme toggle
-            Button {
-                id: appThemeToggle
-                width: 20
-                height: 20
-
-                ToolTip {
-                    visible: appThemeToggle.hovered
-                    text: Themes.currentTheme === "Dark" ? qsTr("Switch to Light Theme") : qsTr("Switch to Dark Theme")
-                    delay: 500
-                    timeout: 5000
-                }
-
-                contentItem: Item {
-                    anchors.fill: parent
-                    Image {
-                        id: themeIcon
-                        anchors.centerIn: parent
-                        width: 18
-                        height: 18
-                        source: Themes.currentTheme === "Dark" ? "qrc:/ui/assets/images/light-theme-icon.png" : "qrc:/ui/assets/images/dark-theme-icon.png"
-                        visible: false
-                    }
-
-                    ColorOverlay {
-                        anchors.fill: themeIcon
-                        source: themeIcon
-                        color: appThemeToggle.hovered ? Material.accentColor : Material.foreground
-                    }
-                }
-
-                background: Rectangle {
-                    anchors.fill: parent
-                    opacity: 0
-                }
-
-                onClicked: function () {
-                    if (Themes.currentTheme === "Dark") {
-                        Themes.setTheme("Light");
-                    } else {
-                        Themes.setTheme("Dark");
-                    }
+            onClicked: function () {
+                if (Themes.currentTheme === "Dark") {
+                    Themes.setTheme("Light");
+                } else {
+                    Themes.setTheme("Dark");
                 }
             }
         }
@@ -116,6 +80,7 @@ ApplicationWindow {
     ColumnLayout {
         anchors.fill: parent
         spacing: 0
+        visible: AppController.init_status
 
         // Tab bar
         TabBar {
