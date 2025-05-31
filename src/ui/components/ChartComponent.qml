@@ -7,6 +7,7 @@ import QtQuick.Layouts
 ColumnLayout {
     id: root
     property string title: ""
+    property color foregroundColor: "black"
     property var comboModels: []
     signal generateRequested
     property string imageSource: ""
@@ -19,7 +20,7 @@ ColumnLayout {
         if (populateYearModel) {
             let currentYear = new Date().getFullYear();
             let years = [];
-            for (let i = currentYear - 100; i <= currentYear; i++) {
+            for (let i = currentYear - 25; i <= currentYear + 1; i++) {
                 years.push(i.toString());
             }
 
@@ -32,7 +33,7 @@ ColumnLayout {
 
             comboModels = includeMonths ? [years, months] : [years];
             let currentMonthIndex = new Date().getMonth();
-            defaultIndices = includeMonths ? [years.length - 1, currentMonthIndex] : [years.length - 1];
+            defaultIndices = includeMonths ? [years.length - 2, currentMonthIndex] : [years.length - 2];
             selectedIndices = defaultIndices.slice();
         }
     }
@@ -44,7 +45,7 @@ ColumnLayout {
         text: root.title
         font.bold: true
         font.pointSize: 14
-        color: Qt.Material.foreground
+        color: root.foregroundColor
         Layout.alignment: Qt.AlignHCenter
     }
 
@@ -78,7 +79,6 @@ ColumnLayout {
             Button {
                 text: "Generate Graph"
                 onClicked: {
-                    console.log("Generate button clicked in component");
                     root.generateRequested();
                 }
             }

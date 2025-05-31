@@ -1,5 +1,5 @@
+import contextlib
 import logging
-from pathlib import Path
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -7,13 +7,13 @@ import pandas as pd
 
 from data import db
 from data.models import Transaction, TransactionType
+from utility.save import data_folder_path
 
 logging.getLogger("matplotlib.font_manager").setLevel(logging.ERROR)
 
 
 def load_transactions_as_dataframe() -> pd.DataFrame:
     """Load all transactions from the database and return them as a pandas DataFrame."""
-    db.initialize()
     session = db.create_session()
 
     try:
@@ -56,7 +56,7 @@ def plot_daily_transactions(year: int, month: int) -> None:
             fontsize=10,
         )
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "dailychart.png"
         plt.savefig(output_path)
@@ -72,7 +72,7 @@ def plot_daily_transactions(year: int, month: int) -> None:
         plt.title(f"No Transactions for {year}-{month:02d}", fontsize=12)
         plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "dailychart.png"
         plt.savefig(output_path)
@@ -122,7 +122,7 @@ def plot_daily_transactions(year: int, month: int) -> None:
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "data/graphs"
+    output_dir = data_folder_path() / "graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "dailychart.png"
     plt.savefig(output_path)
@@ -145,7 +145,7 @@ def plot_monthly_trend(year: int) -> None:
             fontsize=10,
         )
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "monthlychart.png"
         plt.savefig(output_path)
@@ -158,7 +158,7 @@ def plot_monthly_trend(year: int) -> None:
         plt.title(f"No Transactions for {year}", fontsize=12)
         plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "monthlychart.png"
         plt.savefig(output_path)
@@ -209,7 +209,7 @@ def plot_monthly_trend(year: int) -> None:
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "data/graphs"
+    output_dir = data_folder_path() / "graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "monthlychart.png"
     plt.savefig(output_path)
@@ -232,7 +232,7 @@ def plot_income_vs_expense(year: int) -> None:
             fontsize=10,
         )
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "income_vs_expense.png"
         plt.savefig(output_path)
@@ -246,7 +246,7 @@ def plot_income_vs_expense(year: int) -> None:
         plt.title(f"No Income or Expenses for {year}", fontsize=12)
         plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "income_vs_expense.png"
         plt.savefig(output_path)
@@ -266,7 +266,7 @@ def plot_income_vs_expense(year: int) -> None:
     plt.tight_layout()
 
     # Save plot
-    output_dir = Path(__file__).parent / "data/graphs"
+    output_dir = data_folder_path() / "graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "income_vs_expense.png"
     plt.savefig(output_path)
@@ -289,7 +289,7 @@ def plot_expense_distribution(year: int) -> None:
             fontsize=10,
         )
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "expense_distribution.png"
         plt.savefig(output_path)
@@ -305,7 +305,7 @@ def plot_expense_distribution(year: int) -> None:
         plt.title(f"No Expenses for {year}", fontsize=12)
         plt.text(0.5, 0.5, "No data available", ha="center", va="center", fontsize=10)
         plt.axis("off")
-        output_dir = Path(__file__).parent / "data/graphs"
+        output_dir = data_folder_path() / "graphs"
         output_dir.mkdir(exist_ok=True)
         output_path = output_dir / "expense_distribution.png"
         plt.savefig(output_path)
@@ -337,8 +337,22 @@ def plot_expense_distribution(year: int) -> None:
     ax.set_aspect("equal")  # Ensure pie is a circle
 
     # Save plot
-    output_dir = Path(__file__).parent / "data/graphs"
+    output_dir = data_folder_path() / "graphs"
     output_dir.mkdir(exist_ok=True)
     output_path = output_dir / "expense_distribution.png"
     plt.savefig(output_path)
     plt.close()
+
+
+def close_graphs() -> None:
+    """Delete generated graphs before quitting."""
+    dry_run = False
+    folder = data_folder_path() / "graphs"  # delete pngs before quitting
+    if not folder.exists() or not folder.is_dir():
+        return
+    files = list(folder.glob("*.png"))  # list so glob runs once
+
+    for file_path in files:
+        if file_path.exists() and not dry_run:
+            with contextlib.suppress(FileNotFoundError, PermissionError):
+                file_path.unlink()

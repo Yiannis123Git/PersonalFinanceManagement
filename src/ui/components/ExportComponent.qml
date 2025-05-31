@@ -6,6 +6,7 @@ import QtQuick.Controls.Material
 ColumnLayout {
     id: root
     property var appController
+    property color foregroundColor
     Layout.fillHeight: true
     Layout.preferredWidth: parent.width * 0.20
     spacing: 10
@@ -23,7 +24,7 @@ ColumnLayout {
     Text {
         text: "Export by Date"
         font.bold: true
-        color: Qt.Material.foreground
+        color: root.foregroundColor
         Layout.alignment: Qt.AlignHCenter
     }
 
@@ -37,11 +38,11 @@ ColumnLayout {
         Component.onCompleted: {
             let currentYear = new Date().getFullYear();
             let years = [];
-            for (let i = currentYear - 100; i <= currentYear; i++) {
+            for (let i = currentYear - 25; i <= currentYear + 1; i++) {
                 years.push(i.toString());
             }
             exportYear.model = years;
-            exportYear.currentIndex = years.length - 1;
+            exportYear.currentIndex = years.length - 2;
         }
     }
 

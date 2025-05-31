@@ -5,6 +5,7 @@ Item {
     id: root
     property var appController
     property var appWindow
+    property color foregroundColor
     Layout.fillHeight: true
     Layout.preferredWidth: parent.width * 0.78
 
@@ -32,7 +33,8 @@ Item {
                     title: "Income&Expenses for Year in Months"
                     populateYearModel: true
                     includeMonths: false
-                    imageSource: "../../data/graphs/monthlychart.png"
+                    foregroundColor: root.foregroundColor
+                    imageSource: "../../../.dev_data/graphs/monthlychart.png"
                     onGenerateRequested: function () {
                         root.appController.plot_monthly_trend(comboModels[0][selectedIndices[0]]);
                         chart1.reloadImage();
@@ -45,9 +47,9 @@ Item {
                     title: "Income&Expenses for Month in Days"
                     populateYearModel: true
                     includeMonths: true
-                    imageSource: "../../data/graphs/dailychart.png"
+                    foregroundColor: root.foregroundColor
+                    imageSource: "../../../.dev_data/graphs/dailychart.png"
                     onGenerateRequested: function () {
-                        console.log("Generate button clicked for chart 2");
                         root.appController.plot_daily_transactions(comboModels[0][selectedIndices[0]], comboModels[1][selectedIndices[1]]);
                         chart2.reloadImage();
                     }
@@ -59,7 +61,8 @@ Item {
                     title: "Total Income&Expenses for Year"
                     populateYearModel: true
                     includeMonths: false
-                    imageSource: "../../data/graphs/income_vs_expense.png"
+                    foregroundColor: root.foregroundColor
+                    imageSource: "../../../.dev_data/graphs/income_vs_expense.png"
                     onGenerateRequested: function () {
                         root.appController.plot_income_vs_expense(comboModels[0][selectedIndices[0]]);
                         chart3.reloadImage();
@@ -72,7 +75,8 @@ Item {
                     title: "Expense Distribution by Category"
                     populateYearModel: true
                     includeMonths: false
-                    imageSource: "../../data/graphs/expense_distribution.png"
+                    foregroundColor: root.foregroundColor
+                    imageSource: "../../../.dev_data/graphs/expense_distribution.png"
                     onGenerateRequested: function () {
                         root.appController.plot_expense_distribution(comboModels[0][selectedIndices[0]]);
                         chart4.reloadImage();
