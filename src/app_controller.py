@@ -1,20 +1,12 @@
 from __future__ import annotations
 
-import contextlib
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from PySide6.QtCore import QObject, QThread, Signal, Slot
 
 # import app modules
 from data import db
-from excel_gen import export_database, export_transactions_by_month
-from graph_gen import (
-    plot_daily_transactions,
-    plot_expense_distribution,
-    plot_income_vs_expense,
-    plot_monthly_trend,
-)
+from gen import excel_gen, graph_gen
 from utility import qt_util, save
 
 if TYPE_CHECKING:
@@ -85,32 +77,32 @@ class AppController(QObject):
     @Slot(str, str)
     def plot_daily_transactions(self, year: str, month: str) -> None:
         """Generate daily transaction graph."""
-        plot_daily_transactions(int(year), int(month))
+        graph_gen.plot_daily_transactions(int(year), int(month))
 
     @Slot(str)
     def plot_monthly_trend(self, year: str) -> None:
         """Generate monthly trend graph."""
-        plot_monthly_trend(int(year))
+        graph_gen.plot_monthly_trend(int(year))
 
     @Slot(str)
     def plot_income_vs_expense(self, year: str) -> None:
         """Generate income vs expense graph."""
-        plot_income_vs_expense(int(year))
+        graph_gen.plot_income_vs_expense(int(year))
 
     @Slot(str)
     def plot_expense_distribution(self, year: str) -> None:
         """Generate expense distribution graph."""
-        plot_expense_distribution(int(year))
+        graph_gen.plot_expense_distribution(int(year))
 
     @Slot()
     def export_database(self) -> None:
         """Export database to excel."""
-        export_database()
+        excel_gen.export_database()
 
     @Slot(str, str)
     def export_transactions_by_month(self, month: str, year: str) -> None:
         """Export transaction to excel."""
-        export_transactions_by_month(int(month), int(year))
+        excel_gen.export_transactions_by_month(int(month), int(year))
 
     def _start_task(
         self,
@@ -164,14 +156,5 @@ class AppController(QObject):
 
     def cleanup(self) -> None:
         """Prepare application for exit."""
-        dry_run = False
-        folder = Path(__file__).resolve().parent / "data" / "graphs"  # delete pngs before quitting
-        if not folder.exists() or not folder.is_dir():
-            return
-        files = list(folder.glob("*.png"))  # list so glob runs once
-
-        for file_path in files:
-            if file_path.exists() and not dry_run:
-                with contextlib.suppress(FileNotFoundError, PermissionError):
-                    file_path.unlink()
+        graph_gen.close_graphs()
         db.close_db()

@@ -131,9 +131,11 @@ ApplicationWindow {
                     ChartLayout {
                         appController: AppController
                         appWindow: appWindow
+                        foregroundColor: Material.foreground
                     }
                     ExportComponent {
                         appController: AppController
+                        foregroundColor: Material.foreground
                     }
                 }
             }

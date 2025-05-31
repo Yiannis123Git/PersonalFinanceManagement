@@ -1,3 +1,4 @@
+import datetime
 import enum
 
 import xlsxwriter
@@ -23,14 +24,13 @@ def export_database() -> None:
     workbook = xlsxwriter.Workbook(str(excel_path))
 
     models = [Transaction, TransactionCategory, MonthlyTransaction]
-    db.initialize()
 
     with db.create_session() as session:
         for model in models:
             table_name = model.__tablename__
             worksheet = workbook.add_worksheet(name=table_name[:31])
 
-            # inspect columns
+            # inspect columns dynamically
             mapper = inspect(model)
             columns = [col.key for col in mapper.columns]
 
@@ -44,11 +44,12 @@ def export_database() -> None:
             # write rows
             for row_idx, row in enumerate(rows, start=1):
                 for col_idx, col_name in enumerate(columns):
-                    value = getattr(row, col_name)
-
-                    if isinstance(value, enum.Enum):
+                    value = getattr(row, col_name, None)
+                    if value is None:
+                        value = ""
+                    elif isinstance(value, enum.Enum):
                         value = value.value
-                    elif hasattr(value, "isoformat"):
+                    elif isinstance(value, (datetime.date, datetime.datetime)):
                         value = value.isoformat()
 
                     worksheet.write(row_idx, col_idx, value)
@@ -71,12 +72,11 @@ def export_transactions_by_month(month: int, year: int) -> None:
     workbook = xlsxwriter.Workbook(str(excel_path))
     worksheet = workbook.add_worksheet(name="Transactions")
 
-    db.initialize()
-
     with db.create_session() as session:
         # inspect columns dynamically
+        excluded_columns = {"monthly_transaction_id"}
         mapper = inspect(Transaction)
-        columns = [col.key for col in mapper.columns]
+        columns = [col.key for col in mapper.columns if col.key not in excluded_columns]
 
         # write headers
         for col_idx, col_name in enumerate(columns):
