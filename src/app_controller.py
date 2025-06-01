@@ -72,14 +72,11 @@ class AppController(QObject):
     def get_chart_paths(self) -> dict[str, str]:
         """Get chart paths."""
         if not self._chart_paths:
-            try:
-                base_path = save.data_folder_path() / "graphs"
-                self._chart_paths = self._build_chart_paths(base_path)
-            except RuntimeError:
-                self._chart_paths = {}
+            base_path = save.data_folder_path() / "graphs"
+            self._chart_paths = self._build_chart_paths(base_path)
         return self._chart_paths
 
-    chart_paths = Property(dict, get_chart_paths, None, None, "")
+    chart_paths = Property(dict, get_chart_paths)  # type: ignore  # noqa: PGH003
 
     # current initialization step property
     current_init_step, _get_current_init_step, _set_current_init_step, init_step_changed = (
