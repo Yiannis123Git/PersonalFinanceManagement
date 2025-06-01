@@ -17,6 +17,7 @@ ColumnLayout {
     property bool includeMonths: false
 
     Component.onCompleted: {
+        updatePlaceholderVisibility();
         if (populateYearModel) {
             let currentYear = new Date().getFullYear();
             let years = [];
@@ -128,5 +129,14 @@ ColumnLayout {
         var base = imageSource.split("?")[0];
         var timestamp = new Date().getTime();  // unique value to force reload
         chartImage.source = base + "?" + timestamp;
+    }
+    function updatePlaceholderVisibility() {
+        if (!root.imageSource) {
+            placeholderText.visible = true;
+            chartImage.visible = false;
+        } else {
+            placeholderText.visible = false;
+            chartImage.visible = true;
+        }
     }
 }
