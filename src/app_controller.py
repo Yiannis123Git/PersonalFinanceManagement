@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+from pathlib import Path  # noqa: TC003
 from typing import TYPE_CHECKING
 
-from PySide6.QtCore import QObject, QThread, Signal, Slot
+from PySide6.QtCore import Property, QObject, QThread, Signal, Slot
 
 # import app modules
 from data import db
@@ -57,6 +58,28 @@ class AppController(QObject):
 
         self._threads: dict[str, QThread] = {}
         self._workers: dict[str, Worker] = {}
+
+        self._chart_paths: dict[str, str] = {}
+
+    def _build_chart_paths(self, base_path: Path) -> dict[str, str]:
+        return {
+            "monthlyChart": (base_path / "monthlychart.png").resolve().as_uri(),
+            "dailyChart": (base_path / "dailychart.png").resolve().as_uri(),
+            "incomeVsExpense": (base_path / "income_vs_expense.png").resolve().as_uri(),
+            "expenseDistribution": (base_path / "expense_distribution.png").resolve().as_uri(),
+        }
+
+    def get_chart_paths(self) -> dict[str, str]:
+        """Get chart paths."""
+        if not self._chart_paths:
+            try:
+                base_path = save.data_folder_path() / "graphs"
+                self._chart_paths = self._build_chart_paths(base_path)
+            except RuntimeError:
+                self._chart_paths = {}
+        return self._chart_paths
+
+    chart_paths = Property(dict, get_chart_paths, None, None, "")
 
     # current initialization step property
     current_init_step, _get_current_init_step, _set_current_init_step, init_step_changed = (

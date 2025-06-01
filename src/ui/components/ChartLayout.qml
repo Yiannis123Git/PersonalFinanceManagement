@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Layouts
 
@@ -27,61 +28,113 @@ Item {
                 rowSpacing: 20
                 columnSpacing: 120
 
-                // Chart 1
-                ChartComponent {
-                    id: chart1
-                    title: "Income&Expenses for Year in Months"
-                    populateYearModel: true
-                    includeMonths: false
-                    foregroundColor: root.foregroundColor
-                    imageSource: "../../../.dev_data/graphs/monthlychart.png"
-                    onGenerateRequested: function () {
-                        root.appController.plot_monthly_trend(comboModels[0][selectedIndices[0]]);
-                        chart1.reloadImage();
+                // Chart 1 Loader
+                Loader {
+                    id: chart1Loader
+                    active: root.appController.init_status
+                    asynchronous: true
+                    sourceComponent: chart1Component
+                    onLoaded: {
+                        item.imageSource = root.appController.chart_paths["monthlyChart"];
                     }
                 }
 
-                // Chart 2
-                ChartComponent {
-                    id: chart2
-                    title: "Income&Expenses for Month in Days"
-                    populateYearModel: true
-                    includeMonths: true
-                    foregroundColor: root.foregroundColor
-                    imageSource: "../../../.dev_data/graphs/dailychart.png"
-                    onGenerateRequested: function () {
-                        root.appController.plot_daily_transactions(comboModels[0][selectedIndices[0]], comboModels[1][selectedIndices[1]]);
-                        chart2.reloadImage();
+                // Chart 2 Loader
+                Loader {
+                    id: chart2Loader
+                    active: root.appController.init_status === true
+                    asynchronous: true
+                    sourceComponent: chart2Component
+                    onLoaded: {
+                        item.imageSource = root.appController.chart_paths["dailyChart"];
                     }
                 }
 
-                // Chart 3
-                ChartComponent {
-                    id: chart3
-                    title: "Total Income&Expenses for Year"
-                    populateYearModel: true
-                    includeMonths: false
-                    foregroundColor: root.foregroundColor
-                    imageSource: "../../../.dev_data/graphs/income_vs_expense.png"
-                    onGenerateRequested: function () {
-                        root.appController.plot_income_vs_expense(comboModels[0][selectedIndices[0]]);
-                        chart3.reloadImage();
+                // Chart 3 Loader
+                Loader {
+                    id: chart3Loader
+                    active: root.appController.init_status === true
+                    asynchronous: true
+                    sourceComponent: chart3Component
+                    onLoaded: {
+                        item.imageSource = root.appController.chart_paths["incomeVsExpense"];
                     }
                 }
 
-                // Chart 4
-                ChartComponent {
-                    id: chart4
-                    title: "Expense Distribution by Category"
-                    populateYearModel: true
-                    includeMonths: false
-                    foregroundColor: root.foregroundColor
-                    imageSource: "../../../.dev_data/graphs/expense_distribution.png"
-                    onGenerateRequested: function () {
-                        root.appController.plot_expense_distribution(comboModels[0][selectedIndices[0]]);
-                        chart4.reloadImage();
+                // Chart 4 Loader
+                Loader {
+                    id: chart4Loader
+                    active: root.appController.init_status === true
+                    asynchronous: true
+                    sourceComponent: chart4Component
+                    onLoaded: {
+                        item.imageSource = root.appController.chart_paths["expenseDistribution"];
                     }
                 }
+            }
+        }
+    }
+
+    // Chart 1 Component
+    Component {
+        id: chart1Component
+        ChartComponent {
+            id: chart1
+            title: "Income&Expenses for Year in Months"
+            foregroundColor: root.foregroundColor
+            populateYearModel: true
+            includeMonths: false
+            onGenerateRequested: function () {
+                root.appController.plot_monthly_trend(comboModels[0][selectedIndices[0]]);
+                chart1.reloadImage();
+            }
+        }
+    }
+
+    // Chart 2 Component
+    Component {
+        id: chart2Component
+        ChartComponent {
+            id: chart2
+            title: "Income&Expenses for Month in Days"
+            foregroundColor: root.foregroundColor
+            populateYearModel: true
+            includeMonths: true
+            onGenerateRequested: function () {
+                root.appController.plot_daily_transactions(comboModels[0][selectedIndices[0]], comboModels[1][selectedIndices[1]]);
+                chart2.reloadImage();
+            }
+        }
+    }
+
+    // Chart 3 Component
+    Component {
+        id: chart3Component
+        ChartComponent {
+            id: chart3
+            title: "Total Income&Expenses for Year"
+            foregroundColor: root.foregroundColor
+            populateYearModel: true
+            includeMonths: false
+            onGenerateRequested: function () {
+                root.appController.plot_income_vs_expense(comboModels[0][selectedIndices[0]]);
+                chart3.reloadImage();
+            }
+        }
+    }
+
+    // Chart 4 Component
+    Component {
+        id: chart4Component
+        ChartComponent {
+            id: chart4
+            title: "Expense Distribution by Category"
+            foregroundColor: root.foregroundColor
+            populateYearModel: true
+            includeMonths: false
+            onGenerateRequested: function () {
+                root.appController.plot_expense_distribution(comboModels[0][selectedIndices[0]]);
+                chart4.reloadImage();
             }
         }
     }
