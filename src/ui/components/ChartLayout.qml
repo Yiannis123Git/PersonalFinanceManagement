@@ -13,62 +13,75 @@ Item {
     Flickable {
         id: scrollArea
         anchors.fill: parent
-        contentWidth: chartsGrid.implicitWidth
-        contentHeight: chartsGrid.implicitHeight
+        contentWidth: contentWrapper.implicitWidth
+        contentHeight: contentWrapper.implicitHeight
         clip: true
 
-        ColumnLayout {
-            id: layoutColumn
-            width: parent.width
+        Column {
+            id: contentWrapper
+            width: scrollArea.width
             spacing: 20
-            GridLayout {
-                id: chartsGrid
-                width: scrollArea.width
-                columns: root.appWindow.width > 1300 ? 2 : 1  // change between 2x2 and single view
-                rowSpacing: 20
-                columnSpacing: 120
+            Item {
+                width: parent.width
+                height: chartsGrid.implicitHeight
 
-                // Chart 1 Loader
-                Loader {
-                    id: chart1Loader
-                    active: root.appController.init_status
-                    asynchronous: true
-                    sourceComponent: chart1Component
-                    onLoaded: {
-                        item.imageSource = root.appController.chart_paths["monthlyChart"];
-                    }
-                }
+                // gridWrapper with center anchor
+                Item {
+                    id: gridWrapper
+                    width: Math.min(parent.width, chartsGrid.implicitWidth)
+                    height: chartsGrid.implicitHeight
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.top: parent.top
+                    GridLayout {
+                        id: chartsGrid
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        columns: root.appWindow.width > 1650 ? 2 : 1  // change between 2x2 and single view
+                        rowSpacing: 20
+                        columnSpacing: 100
 
-                // Chart 2 Loader
-                Loader {
-                    id: chart2Loader
-                    active: root.appController.init_status === true
-                    asynchronous: true
-                    sourceComponent: chart2Component
-                    onLoaded: {
-                        item.imageSource = root.appController.chart_paths["dailyChart"];
-                    }
-                }
+                        // Chart 1 Loader
+                        Loader {
+                            id: chart1Loader
+                            active: root.appController.init_status
+                            asynchronous: true
+                            sourceComponent: chart1Component
+                            onLoaded: {
+                                item.imageSource = root.appController.chart_paths["monthlyChart"];
+                            }
+                        }
 
-                // Chart 3 Loader
-                Loader {
-                    id: chart3Loader
-                    active: root.appController.init_status === true
-                    asynchronous: true
-                    sourceComponent: chart3Component
-                    onLoaded: {
-                        item.imageSource = root.appController.chart_paths["incomeVsExpense"];
-                    }
-                }
+                        // Chart 2 Loader
+                        Loader {
+                            id: chart2Loader
+                            active: root.appController.init_status === true
+                            asynchronous: true
+                            sourceComponent: chart2Component
+                            onLoaded: {
+                                item.imageSource = root.appController.chart_paths["dailyChart"];
+                            }
+                        }
 
-                // Chart 4 Loader
-                Loader {
-                    id: chart4Loader
-                    active: root.appController.init_status === true
-                    asynchronous: true
-                    sourceComponent: chart4Component
-                    onLoaded: {
-                        item.imageSource = root.appController.chart_paths["expenseDistribution"];
+                        // Chart 3 Loader
+                        Loader {
+                            id: chart3Loader
+                            active: root.appController.init_status === true
+                            asynchronous: true
+                            sourceComponent: chart3Component
+                            onLoaded: {
+                                item.imageSource = root.appController.chart_paths["incomeVsExpense"];
+                            }
+                        }
+
+                        // Chart 4 Loader
+                        Loader {
+                            id: chart4Loader
+                            active: root.appController.init_status === true
+                            asynchronous: true
+                            sourceComponent: chart4Component
+                            onLoaded: {
+                                item.imageSource = root.appController.chart_paths["expenseDistribution"];
+                            }
+                        }
                     }
                 }
             }
