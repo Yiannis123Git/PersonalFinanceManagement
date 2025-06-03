@@ -60,6 +60,15 @@ Window {
         }
     }
 
+    function syncCategoryField() {
+        if (fieldLoader.status !== Loader.Ready) {
+            console.error("Cannot sync category field, because the fields component is not loaded yet.");
+            return;
+        }
+
+        fieldLoader.item.syncCategoryField(); // qmllint disable use-proper-function missing-property
+    }
+
     width: 800
     height: 650
 
@@ -91,8 +100,6 @@ Window {
                 console.error("Cannot sync category field, because the fields component is not loaded yet.");
                 return;
             }
-
-            fieldLoader.item.syncCategoryField(); // qmllint disable use-proper-function missing-property
         }
     }
 

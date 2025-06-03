@@ -550,6 +550,9 @@ Item {
                         onTransactionEdit: function (transactionData) {
                             transactionEditor.resetFields();
 
+                            // Sync category field
+                            transactionEditor.syncCategoryField();
+
                             // Set the editor context to Edit
                             overview.currentEditorContext = Overview.EditorContext.Edit;
 
@@ -594,6 +597,9 @@ Item {
                         overview.currentEditorContext = Overview.EditorContext.Create;
 
                         transactionEditor.resetFields();
+
+                        // Sync category field
+                        transactionEditor.syncCategoryField();
 
                         let currentDate = new Date();
                         let displayedDate = overview.transactionModel.current_month;
@@ -643,6 +649,9 @@ Item {
 
                         onMonthlyTransactionEdit: function (monthlyTransactionData) {
                             monthlyTransactionEditor.resetFields();
+
+                            // Sync category field
+                            monthlyTransactionEditor.syncCategoryField();
 
                             // Set the editor context to Edit
                             overview.currentEditorContext = Overview.EditorContext.Edit;
@@ -708,6 +717,9 @@ Item {
 
                         // Reset fields
                         monthlyTransactionEditor.resetFields();
+
+                        // Sync category field
+                        monthlyTransactionEditor.syncCategoryField();
 
                         // Set editor window size/constraints
                         monthlyTransactionEditor.minimumWidth = 500;
