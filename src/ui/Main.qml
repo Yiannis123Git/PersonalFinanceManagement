@@ -1,4 +1,4 @@
-// Disable certain linting rules for this file due to AppController usage
+// Disable certain linting rules for this file due to AppController and PFM.Models usage
 // qmllint disable unqualified
 // qmllint disable import
 
@@ -8,17 +8,18 @@ import QtQuick.Controls.Material
 import QtQuick.Layouts
 import "./components"
 import AppController 1.0
+import PFM.Models
 
 ApplicationWindow {
     id: appWindow
-    width: Screen.width / 2
-    height: Screen.height / 2
+    width: Screen.width / 1.25
+    height: Screen.height / 1.25
     visible: true
     title: qsTr("Personal Finance Management")
 
     // Window size constraints
-    minimumWidth: 800
-    minimumHeight: 600
+    minimumWidth: 1400
+    minimumHeight: 800
     maximumWidth: Screen.width
     maximumHeight: Screen.height
 
@@ -76,6 +77,22 @@ ApplicationWindow {
         }
     }
 
+    // Transaction model
+    Loader {
+        id: transactionModelLoader
+        active: AppController.init_status // defer data model loading until db is ready
+        sourceComponent: TransactionModel {}
+        asynchronous: true
+    }
+
+    // Monthly Transaction model
+    Loader {
+        id: monthlyTransactionModelLoader
+        active: AppController.init_status // defer data model loading until db is ready
+        sourceComponent: MonthlyTransactionModel {}
+        asynchronous: true
+    }
+
     // App window content
     ColumnLayout {
         anchors.fill: parent
@@ -108,17 +125,15 @@ ApplicationWindow {
             Layout.fillWidth: true
             Layout.fillHeight: true
 
-            Item {
+            Overview {
                 id: overviewTab
+
                 Layout.fillWidth: true
                 Layout.fillHeight: true
 
-                Text {
-                    anchors.centerIn: parent
-                    text: qsTr("Overview tab content")
-                    font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.05)
-                    color: Material.foreground
-                }
+                window: appWindow
+                transactionModel: transactionModelLoader.status == Loader.Ready ? transactionModelLoader.item : null
+                monthlyTransactionModel: monthlyTransactionModelLoader.status == Loader.Ready ? monthlyTransactionModelLoader.item : null
             }
 
             Item {

@@ -30,7 +30,12 @@ class Transaction(Base):
     execution_date: Mapped[date] = mapped_column(Date())
     category: Mapped[str] = mapped_column(
         String(),
-        ForeignKey("transaction_categories.name"),
+        ForeignKey("transaction_categories.name", ondelete="CASCADE", onupdate="CASCADE"),
+    )
+    monthly_transaction_id: Mapped[int] = mapped_column(
+        Integer(),
+        ForeignKey("monthly_transactions.id", ondelete="SET NULL"),
+        nullable=True,
     )
 
 
@@ -53,5 +58,6 @@ class MonthlyTransaction(Base):
     end_date: Mapped[date] = mapped_column(Date(), nullable=True)
     category: Mapped[str] = mapped_column(
         String(),
-        ForeignKey("transaction_categories.name"),
+        ForeignKey("transaction_categories.name", ondelete="CASCADE", onupdate="CASCADE"),
     )
+    generated_until: Mapped[date] = mapped_column(Date(), nullable=True)
