@@ -1,20 +1,28 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, cast
+from sqlite3 import Connection as SQLite3Connection
+from typing import cast
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
+from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from utility import save
 
 from .models import Base
 
-if TYPE_CHECKING:
-    from sqlalchemy.engine import Engine
-
 # create logger for module
 logger = logging.getLogger(__name__)
+
+
+# Enable foreign key constraints
+@event.listens_for(Engine, "connect")
+def _set_sqlite_pragma(dbapi_connection: object, connection_record) -> None:  # noqa: ANN001, ARG001
+    if isinstance(dbapi_connection, SQLite3Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.close()
 
 
 class State:
