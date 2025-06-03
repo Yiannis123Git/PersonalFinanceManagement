@@ -14,7 +14,7 @@ def export_database() -> None:
     excel_path, _ = QFileDialog.getSaveFileName(
         None,
         "Save Excel File As",
-        "database_export.xlsx",
+        "financial_data.xlsx",
         "Excel Files (*.xlsx)",
     )
 
