@@ -116,6 +116,15 @@ Item {
                 newCategoryNameField.badInputTextVisible = true;
                 return;
             }
+
+            // Store retention name to retain index after changes
+            let retentionName;
+            if (currentDialogContext === CategoryField.DialogContext.Edit) {
+                retentionName = newCategoryNameField.text;
+            } else {
+                retentionName = categoryField.currentText;
+            }
+
             let result;
 
             if (currentDialogContext == CategoryField.DialogContext.Create) {
@@ -130,15 +139,16 @@ Item {
                 categoryDialog.close();
                 newCategoryNameField.badInputTextVisible = false;
 
-                if (currentDialogContext == CategoryField.DialogContext.Create) {
-                    // retain currently selected index
-                    categoryField.currentIndex = categoryField.lastSelectedIndex + 1;
-                    categoryField.lastSelectedIndex = categoryField.lastSelectedIndex + 1;
-                }
-
                 if (currentDialogContext == CategoryField.DialogContext.Edit) {
                     // emit signal to notify that category was edited
                     categoryFieldContainer.categoryEdited();
+                }
+
+                // Retain currently selected category
+                let retention_index = categoryModelLoader.item.index_of(retentionName);
+                if (retention_index !== -1 && retention_index < categoryField.count - 1) {
+                    categoryField.currentIndex = retention_index;
+                    categoryField.lastSelectedIndex = retention_index;
                 }
             } else {
                 newCategoryNameField.badInputText = result.error;
@@ -172,6 +182,10 @@ Item {
             if (result == true) {
                 categoryFieldContainer.categoryDeleted();
                 deleteCategoryDialog.close();
+
+                if (categoryField.currentIndex === deleteCategoryDialog.deleteIndex) {
+                    categoryFieldContainer.setState(categoryModelLoader.item.display_for, null);
+                }
             }
         }
     }

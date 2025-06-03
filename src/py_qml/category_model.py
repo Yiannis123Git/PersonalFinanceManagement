@@ -66,10 +66,23 @@ class CategoryModel(QAbstractListModel):
             # Execute query
             categories = [category.name for category in session.scalars(stmt).all()]
 
+        # Sort categories alphabetically, case-insensitive
+        categories.sort(key=str.lower)
+
         # Append creation element to categories
         categories.append("Create new category")
 
         return categories
+
+    def _get_insert_index(self, category_name: str) -> int:
+        insert_index = len(self._categories) - 1  # We want to always be behind the creation element
+
+        for i, existing_category in enumerate(self._categories[:-1]):
+            if category_name.lower() < existing_category.lower():
+                insert_index = i
+                break
+
+        return insert_index
 
     def __init__(self, parent: QObject | None = None) -> None:
         super().__init__(parent)
@@ -133,8 +146,9 @@ class CategoryModel(QAbstractListModel):
             logger.info("Created new category: %s", new_category_info)
 
             # Append new category to the model
-            self.beginInsertRows(QModelIndex(), 0, 0)  # Insert at the front
-            self._categories.insert(0, category_name)  # Insert at the front of the list
+            insert_index = self._get_insert_index(category_name)
+            self.beginInsertRows(QModelIndex(), insert_index, insert_index)  # Insert at the front
+            self._categories.insert(insert_index, category_name)  # Insert at the front of the list
             self.endInsertRows()
 
         except IntegrityError:  # Catch duplicate names
@@ -174,12 +188,18 @@ class CategoryModel(QAbstractListModel):
 
             # Check if data model needs to be updated
             if self.display_for == category_type:
+                # Remove from current position
                 index = self._categories.index(category_name)
 
-                # Update the model
-                self._categories[index] = new_name
-                model_index = self.index(index, 0)  # Qt method that returns a QModelIndex
-                self.dataChanged.emit(model_index, model_index)
+                self.beginRemoveRows(QModelIndex(), index, index)
+                self._categories.pop(index)
+                self.endRemoveRows()
+
+                # Insert at new position
+                insert_index = self._get_insert_index(new_name)
+                self.beginInsertRows(QModelIndex(), insert_index, insert_index)
+                self._categories.insert(insert_index, new_name)
+                self.endInsertRows()
 
         except IntegrityError:  # Catch duplicate names
             return {"success": False, "error": "A category with that name already exists."}
@@ -282,3 +302,12 @@ class CategoryModel(QAbstractListModel):
             return False
         else:
             return True
+
+    @Slot(str, result=int)
+    def index_of(self, category_name: str) -> int:
+        """Get the index of a category in the model."""
+        try:
+            return self._categories.index(category_name)
+        except ValueError:
+            logger.exception("Failed to get index of category: %s", category_name)
+            return -1
