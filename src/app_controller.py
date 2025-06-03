@@ -8,7 +8,6 @@ from PySide6.QtCore import Property, QObject, QThread, Signal, Slot
 # import app modules
 from data import db, monthly_gen
 from gen import excel_gen, graph_gen
-
 from utility import qt_util, save
 
 if TYPE_CHECKING:
