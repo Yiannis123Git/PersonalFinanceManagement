@@ -87,7 +87,7 @@ class MonthlyTransactionModel(QAbstractListModel):
         insert_index = len(self._monthly_transactions)
 
         for i, transaction in enumerate(self._monthly_transactions):
-            if transaction.name > name:
+            if transaction.name.lower() > name.lower():
                 insert_index = i
                 break
 
