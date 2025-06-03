@@ -140,12 +140,18 @@ ApplicationWindow {
                 id: dataAnalysisTab
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                Text {
-                    anchors.centerIn: parent
-                    text: qsTr("Data Analysis tab content")
-                    font.pointSize: Math.max(10, Math.min(parent.width, parent.height) * 0.05)
-                    color: Material.foreground
+                RowLayout {
+                    anchors.fill: parent
+                    spacing: 20
+                    ChartLayout {
+                        appController: AppController
+                        appWindow: appWindow
+                        foregroundColor: Material.foreground
+                    }
+                    ExportComponent {
+                        appController: AppController
+                        foregroundColor: Material.foreground
+                    }
                 }
             }
         }
