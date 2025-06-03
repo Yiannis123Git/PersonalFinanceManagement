@@ -8,7 +8,7 @@ def qt_property[T](
     property_name: str,
     signal_attr_name: str,
 ) -> tuple[Property, Callable[[QObject], T], Callable[[QObject, T], None], Signal]:
-    """Create a Qt property.
+    """Create a simple Qt property.
 
     Args:
         property_type (type): The type of the property.
@@ -24,7 +24,7 @@ def qt_property[T](
 
     """
     private_attribute = f"_{property_name}"
-    signal = Signal(property_type)
+    signal = Signal()
 
     def getter(self: QObject) -> T:
         """Qt property getter."""
@@ -34,6 +34,6 @@ def qt_property[T](
         """Qt property setter."""
         if getattr(self, private_attribute) != value:
             setattr(self, private_attribute, value)
-            getattr(self, signal_attr_name).emit(value)
+            getattr(self, signal_attr_name).emit()
 
     return Property(property_type, getter, setter, notify=signal), getter, setter, signal  # type: ignore  # noqa: PGH003
