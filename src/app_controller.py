@@ -5,7 +5,7 @@ from typing import TYPE_CHECKING
 from PySide6.QtCore import QObject, QThread, Signal
 
 # import app modules
-from data import db
+from data import db, monthly_gen
 from utility import qt_util, save
 
 if TYPE_CHECKING:
@@ -42,6 +42,9 @@ class InitializationWorker(Worker):
 
         self.step_changed.emit("Initializing database")
         db.initialize()
+
+        self.step_changed.emit("Ensuring transaction data is up to date")
+        monthly_gen.gen_transactions_for_all()
 
         self.init_finished.emit(True)  # noqa: FBT003
 

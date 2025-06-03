@@ -4,5 +4,8 @@
         <file>assets/images/light-theme-icon.png</file>
         <file>assets/images/dark-theme-icon.png</file>
         <file>assets/images/loading-circle.png</file>
+        <file>assets/images/bin-icon.svg</file>
+        <file>assets/images/plus-icon.svg</file>
+        <file>assets/images/cog-icon.svg</file>
     </qresource>
 </RCC>

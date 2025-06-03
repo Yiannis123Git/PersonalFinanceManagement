@@ -9,6 +9,9 @@ from PySide6.QtWidgets import QApplication
 # Import app modules
 from app_controller import AppController
 
+# Import qml data models
+from py_qml import category_model, monthly_transaction_model, transaction_model  # noqa: F401
+
 # Import qrc resources
 from ui import qml_rc  # noqa: F401
 
