@@ -51,8 +51,8 @@ ColumnLayout {
     }
 
     Rectangle {
-        width: 600
-        height: 40
+        Layout.preferredWidth: 600
+        Layout.preferredHeight: 40
         color: "transparent"
 
         RowLayout {
@@ -99,7 +99,6 @@ ColumnLayout {
             anchors.centerIn: parent
             width: parent.width
             height: parent.height
-            source: root.imageSource
 
             onStatusChanged: {
                 if (status === Image.Error) {
