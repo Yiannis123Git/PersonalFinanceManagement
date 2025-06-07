@@ -77,3 +77,25 @@ poetry run python ./src/main.py
 - Confirm the deletion when prompted.
 
 **Warning:** Deleting a category will also delete all associated transactions(Including monthly recurring transactions).
+
+### Analyzing Finances in the Data Analysis Tab
+
+#### Generating and viewing charts
+- Open the Data Analysis Tab from the navigation bar.
+- Each chart includes drop down menus for selecting the the desired year and in some cases month, depending on the chart.
+- After making your selections, click the **Generate Graph** button to display the desired chart
+
+**Note:** Charts do *not* refresh automatically. You must click **Generate Graph** after changning the time period or modifying your data.
+
+#### Exporting Data
+- Use the *panel on the right side* of the Data Analysis Tab to export financial data.
+
+##### Export All to Excel
+- Click this button to export **all your transaction data** to an Excel file.
+
+##### Export by Date
+- Use the **Year** and **Month** dropdowns to select a specific time period.
+- Then click the **Export Filtered** button to export only the transaction for the selected month and year.
+
+**Note:** Exported files are generated as **.xlsx** spreadsheets and saved using your system's default prompt.
+    
