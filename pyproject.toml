@@ -1,6 +1,6 @@
 [project]
 name = "personalfinancemanagement"
-version = "0.1.0"
+version = "1.0.0"
 description = ""
 readme = "README.md"
 requires-python = ">=3.13,<3.14"
@@ -9,7 +9,7 @@ dependencies = [
     "matplotlib (>=3.10.1,<4.0.0)",
     "xlsxwriter (>=3.2.2,<4.0.0)",
     "pyside6 (>=6.8.2.1,<7.0.0.0)",
-    "pandas (>=2.2.3,<3.0.0)"
+    "pandas (>=2.2.3,<3.0.0)",
 ]
 
 [tool.poetry]
